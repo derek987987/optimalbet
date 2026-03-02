@@ -1,0 +1,44 @@
+/* src/styles/theme.css */
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-primary: #f9fafb;
+    --bg-secondary: #ffffff;
+    --text-primary: #111827;
+    --text-secondary: #4b5563;
+    --accent-color: #1d4ed8;
+  }
+
+  .dark {
+    --bg-primary: #030712;
+    --bg-secondary: #111827;
+    --text-primary: #f9fafb;
+    --text-secondary: #9ca3af;
+    --accent-color: #3b82f6;
+  }
+
+  body {
+    @apply bg-[var(--bg-primary)] text-[var(--bg-primary)] transition-colors duration-300;
+    /* Force dark mode by default if needed, or rely on tailwind 'dark' class */
+  }
+}
+
+@layer components {
+  .dashboard-card {
+    @apply bg-[var(--bg-secondary)] border border-gray-200 dark:border-gray-800 rounded-xl shadow-sm overflow-hidden;
+  }
+  
+  .input-label {
+    @apply text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider;
+  }
+
+  /* Optimized typography for high-pressure decision making */
+  .analytics-value {
+    @apply font-black tracking-tighter;
+  }
+  
+  .analytics-label {
+    @apply font-bold uppercase tracking-widest text-[var(--text-secondary)];
+  }
+}
