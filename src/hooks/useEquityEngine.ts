@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import * as Comlink from 'comlink';
 import type { PokerEngine } from '../engine/worker';
 import type { GameState, SimulationResult } from '../engine/core';
+import { calculateBayesianRange } from '../engine/valuation/formulas';
 
 interface UseEquityEngineProps {
   holeCards: number[];
@@ -37,11 +38,24 @@ export const useEquityEngine = ({
 
     setIsCalculating(true);
     try {
+      // Apply Bayesian range weighting to all opponents
+      const bayesianOpponents = (gameState.opponents || []).map(opp => ({
+        ...opp,
+        rangePercentage: calculateBayesianRange(
+          opp.rangePreset === 'Tight' ? 0.15 : opp.rangePreset === 'Loose' ? 0.40 : 1.0,
+          gameState.potSize,
+          gameState.facingBetSize
+        )
+      }));
+
       const simResult = await engineRef.current.calculate({
         holeCards,
         boardCards,
-        gameState,
-        options: { iterations: 10000, mode: 'auto' }
+        gameState: {
+          ...gameState,
+          opponents: bayesianOpponents
+        },
+        options: { iterations: 100000, mode: 'auto' }
       });
       setResult(simResult as unknown as SimulationResult);
     } catch (e) {

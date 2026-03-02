@@ -1,3 +1,5 @@
+import { classifyTexture } from '../core/texture';
+
 export function calculatePotOdds(pot: number, facing: number, call: number): number {
   const total = pot + facing + call;
   if (total === 0) return 0;
@@ -5,20 +7,32 @@ export function calculatePotOdds(pot: number, facing: number, call: number): num
 }
 
 export function calculateEV(equity: number, pot: number, facing: number, call: number): number {
-  // P_win * $win - P_lose * $lose
-  // $win = pot + facing (the money currently in pot)
-  // $lose = call (the amount we risk)
   return (equity * (pot + facing)) - ((1 - equity) * call);
 }
 
-export function getAdjustedEquity(equity: number, isIP: boolean): number {
-  const eqr = isIP ? 1.15 : 0.85;
-  return equity * eqr;
+export function calculateBayesianRange(initialPercentage: number, potSize: number, facingBet: number): number {
+  if (potSize === 0) return initialPercentage;
+  const decay = Math.max(0.1, 1.0 - (facingBet / (potSize * 2)));
+  return initialPercentage * decay;
 }
 
-export function getRecommendation(gameState: { potSize: number, facingBetSize: number, stackSize: number, isIP: boolean }, equity: number) {
+export function getAdjustedEquity(equity: number, isIP: boolean, board: number[]): number {
+  const baseEqr = isIP ? 1.15 : 0.85;
+  const texture = classifyTexture(board);
+  
+  let multiplier = 1.0;
+  if (texture === 'MONOTONE' || texture === 'COORDINATED') {
+    multiplier = 1.1; 
+  } else if (texture === 'PAIRED') {
+    multiplier = 1.05;
+  }
+
+  return equity * baseEqr * multiplier;
+}
+
+export function getRecommendation(gameState: { potSize: number, facingBetSize: number, stackSize: number, isIP: boolean, boardCards: number[] }, equity: number) {
   const call = Math.min(gameState.facingBetSize, gameState.stackSize);
-  const adjustedEquity = getAdjustedEquity(equity, gameState.isIP);
+  const adjustedEquity = getAdjustedEquity(equity, gameState.isIP, gameState.boardCards);
   const ev = calculateEV(adjustedEquity, gameState.potSize, gameState.facingBetSize, call);
   const potOdds = calculatePotOdds(gameState.potSize, gameState.facingBetSize, call);
   

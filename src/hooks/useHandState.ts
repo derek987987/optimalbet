@@ -27,10 +27,35 @@ export const useHandState = () => {
     setBoardCards([]);
   }, []);
 
+  const setCardAt = useCallback((type: 'hole' | 'board', index: number, card: number | null) => {
+    if (type === 'hole') {
+      setHoleCards(prev => {
+        const next = [...prev];
+        if (card === null) {
+          next.splice(index, 1);
+        } else {
+          next[index] = card;
+        }
+        return next.filter(c => c !== undefined);
+      });
+    } else {
+      setBoardCards(prev => {
+        const next = [...prev];
+        if (card === null) {
+          next.splice(index, 1);
+        } else {
+          next[index] = card;
+        }
+        return next.filter(c => c !== undefined);
+      });
+    }
+  }, []);
+
   return useMemo(() => ({
     holeCards,
     boardCards,
     toggleCard,
+    setCardAt,
     clearHand
-  }), [holeCards, boardCards, toggleCard, clearHand]);
+  }), [holeCards, boardCards, toggleCard, setCardAt, clearHand]);
 };

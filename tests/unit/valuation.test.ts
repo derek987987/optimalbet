@@ -12,10 +12,16 @@ describe('Valuation Formulas', () => {
     expect(calculateEV(0.5, 100, 50, 50)).toBe(50);
   });
 
-  it('applies Equity Realization (EQR) based on position', () => {
-    // Raw 50% * 1.15 = 57.5%
-    expect(getAdjustedEquity(0.5, true)).toBe(0.575);
-    // Raw 50% * 0.85 = 42.5%
-    expect(getAdjustedEquity(0.5, false)).toBe(0.425);
+  it('applies Equity Realization (EQR) based on position and texture', () => {
+    const dryBoard = [0, 4, 8]; // Ah 2h 3h -> Monotone? No, 0, 13, 26 are same suit. Ah is 0. 2h is 1? No. Ah=0, Ad=1, Ac=2, As=3. 2h=4.
+    // 0%4=0, 4%4=0, 8%4=0 -> All Hearts.
+    const wetBoard = [0, 4, 8, 12, 16]; // Monotone hearts
+    
+    // Raw 50% * 1.15 (IP) * 1.1 (Monotone) = 0.6325
+    expect(getAdjustedEquity(0.5, true, wetBoard)).toBeCloseTo(0.6325, 4);
+    
+    // Raw 50% * 0.85 (OOP) * 1.0 (Dry) = 0.425
+    const dryBoardActual = [0, 21, 46]; // 2c 7d Kh
+    expect(getAdjustedEquity(0.5, false, dryBoardActual)).toBe(0.425);
   });
 });

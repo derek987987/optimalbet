@@ -24,15 +24,21 @@ export const CardGrid: React.FC<CardGridProps> = ({ onToggleCard, selectedCards,
               return (
                 <button
                   key={rankName}
-                  disabled={isSelected}
                   onClick={() => onToggleCard(cardId)}
-                  className={`h-9 rounded-lg font-bold text-xs transition-all ${
+                  className={`h-9 rounded-lg font-bold text-xs transition-all relative ${
                     isSelected 
-                      ? 'bg-slate-100 text-slate-300 dark:bg-slate-800 dark:text-slate-600 cursor-not-allowed' 
+                      ? 'bg-white text-slate-900 border-2 border-blue-500 shadow-md ring-1 ring-blue-500/20' 
                       : 'bg-slate-100 text-slate-900 dark:bg-slate-800 dark:text-slate-100 hover:bg-blue-600 hover:text-white active:scale-95'
                   }`}
                 >
                   {rankName}
+                  {isSelected && (
+                    <div className="absolute -top-1 -right-1 bg-blue-500 text-white rounded-full w-3 h-3 flex items-center justify-center">
+                      <svg className="w-2 h-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
                 </button>
               );
             })}

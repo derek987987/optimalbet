@@ -46,12 +46,18 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSlotClick = (_type: 'hole' | 'board') => {
-    setIsModalOpen(true);
+  const handleSlotClick = (type: 'hole' | 'board', index: number, currentCard?: number) => {
+    if (currentCard !== undefined) {
+      // If card exists, remove it on tap (per US4)
+      onSelectCard(currentCard); 
+    } else {
+      setIsModalOpen(true);
+    }
   };
 
   const handleCardSelect = (card: number) => {
     onSelectCard(card);
+    // Modal stays open for auto-advance filling (per US4)
   };
 
   const allSelected = [...holeCards, ...boardCards];
@@ -60,19 +66,19 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
     <div className="flex flex-col gap-4 p-4">
       <div className="flex justify-between items-center">
         <h3 className="text-xs font-bold text-gray-500 uppercase">Hole Cards</h3>
-        <button onClick={onClear} className="text-[10px] text-blue-500 font-bold uppercase">Clear</button>
+        <button onClick={onClear} className="text-[10px] text-blue-500 font-bold uppercase">Clear All</button>
       </div>
       <div className="flex gap-2">
         <CardSlot 
           card={holeCards[0]} 
           label="H1" 
-          onClick={() => handleSlotClick('hole')}
+          onClick={() => handleSlotClick('hole', 0, holeCards[0])}
           className="hole-card-slot" 
         />
         <CardSlot 
           card={holeCards[1]} 
           label="H2" 
-          onClick={() => handleSlotClick('hole')}
+          onClick={() => handleSlotClick('hole', 1, holeCards[1])}
           className="hole-card-slot"
         />
       </div>
@@ -84,7 +90,7 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
             key={i}
             card={boardCards[i]} 
             label={`B${i+1}`} 
-            onClick={() => handleSlotClick('board')}
+            onClick={() => handleSlotClick('board', i, boardCards[i])}
             className="board-card-slot"
           />
         ))}
