@@ -17,15 +17,23 @@ export const useEquityEngine = ({
 }: UseEquityEngineProps) => {
   const [result, setResult] = useState<SimulationResult | null>(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const workerRef = useRef<Worker | null>(null);
   const engineRef = useRef<Comlink.Remote<PokerEngine> | null>(null);
+  
+  // Use strings for stable dependency tracking of arrays/objects
+  const holeCardsKey = JSON.stringify(holeCards);
+  const boardCardsKey = JSON.stringify(boardCards);
+  const gameStateKey = JSON.stringify({
+    pot: gameState.potSize,
+    facing: gameState.facingBetSize,
+    ip: gameState.isIP,
+    opponents: gameState.opponents.map(o => ({ id: o.id, r: o.rangePreset }))
+  });
 
   useEffect(() => {
     const worker = new Worker(new URL('../engine/worker.ts', import.meta.url), {
       type: 'module'
     });
     engineRef.current = Comlink.wrap<PokerEngine>(worker);
-    workerRef.current = worker;
 
     return () => worker.terminate();
   }, []);
@@ -55,7 +63,8 @@ export const useEquityEngine = ({
           ...gameState,
           opponents: bayesianOpponents
         },
-        options: { iterations: 100000, mode: 'auto' }
+        // Reduced to 10,000 for TS performance. WASM will handle 100k later.
+        options: { iterations: 10000, mode: 'auto' }
       });
       setResult(simResult as unknown as SimulationResult);
     } catch (e) {
@@ -63,7 +72,9 @@ export const useEquityEngine = ({
     } finally {
       setIsCalculating(false);
     }
-  }, [holeCards, boardCards, gameState]);
+    // We use keys for dependencies to ensure stability
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [holeCardsKey, boardCardsKey, gameStateKey]);
 
   // Debounce for UI responsiveness
   useEffect(() => {
