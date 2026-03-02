@@ -27,3 +27,5 @@ coverage/
 
 .gemini/
 gha-creds-*.json
+playwright-report/
+test-results/
