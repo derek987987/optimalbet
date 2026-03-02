@@ -46,7 +46,7 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleSlotClick = (type: 'hole' | 'board', index: number, currentCard?: number) => {
+  const handleSlotClick = (_type: 'hole' | 'board', _index: number, currentCard?: number) => {
     if (currentCard !== undefined) {
       // If card exists, remove it on tap (per US4)
       onSelectCard(currentCard); 

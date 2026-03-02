@@ -35,36 +35,14 @@ const engine = {
     const opponentRanges = (gameState.opponents || []).map(o => 
       getRangeBitmask(o.rangePreset, o.rangePercentage)
     );
-let simResult;
-let wasmEngine: any = null;
 
-try {
-  // Try to load WASM engine if available
-  // @ts-ignore
-  wasmEngine = await import('./wasm/pkg/optimalbet_engine');
-} catch (e) {
-  console.warn('WASM engine not available, falling back to TypeScript:', e);
-}
+    let simResult;
+    
+    // Switch to exact enumeration for heads-up post-flop
+    const isPostFlop = boardCards.length >= 3;
+    const isHeadsUp = gameState.opponentCount === 1;
 
-// Switch to exact enumeration for heads-up post-flop
-const isPostFlop = boardCards.length >= 3;
-const isHeadsUp = gameState.opponentCount === 1;
-
-if (wasmEngine) {
-  const res = wasmEngine.simulate_monte_carlo(
-    new Uint8Array(holeCards),
-    new Uint8Array(boardCards),
-    gameState.opponentCount,
-    options.iterations,
-    opponentRanges
-  );
-  simResult = {
-    rawEquity: res.raw_equity,
-    combinationsProcessed: res.iterations_processed,
-    isMonteCarlo: true
-  };
-} else if (isHeadsUp && isPostFlop && options.mode !== 'monte-carlo') {
-...
+    if (isHeadsUp && isPostFlop && options.mode !== 'monte-carlo') {
       simResult = simulateEnumeration(holeCards, boardCards, opponentRanges);
     } else {
       simResult = simulateMonteCarlo(
