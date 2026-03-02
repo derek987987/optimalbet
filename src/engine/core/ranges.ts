@@ -1,5 +1,3 @@
-import { CardFactory } from './card-factory';
-
 export const RANGE_PRESETS = {
   Tight: 'Tight',
   Loose: 'Loose',

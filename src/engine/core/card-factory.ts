@@ -1,5 +1,5 @@
 import { createCard as coreCreateCard, RANK_NAMES, SUIT_NAMES } from './cards';
-import type { CardId, Rank, Suit } from './cards';
+import type { CardId } from './cards';
 
 export const CardFactory = {
   create(rank: number, suit: number): CardId {

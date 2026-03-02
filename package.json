@@ -15,7 +15,7 @@
     "test:e2e": "playwright test",
     "preview": "vite preview",
     "test": "npm run test:unit && npm run test:e2e",
-    "format": "prettier --write "src/**/*.{ts,tsx,css,md}""
+    "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\""
   },
   "dependencies": {
     "clsx": "^2.1.1",

@@ -1,6 +1,4 @@
 import React from 'react';
-import { createCard } from '../../engine/core/card-factory';
-import { getCardName } from '../../engine/utils/card-naming';
 import { CardGrid } from './CardGrid';
 
 interface CardModalProps {

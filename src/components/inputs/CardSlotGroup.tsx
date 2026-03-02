@@ -45,10 +45,8 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
   onClear
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeSlot, setActiveSlot] = useState<'hole' | 'board' | null>(null);
 
-  const handleSlotClick = (type: 'hole' | 'board') => {
-    setActiveSlot(type);
+  const handleSlotClick = (_type: 'hole' | 'board') => {
     setIsModalOpen(true);
   };
 

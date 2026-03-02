@@ -1,5 +1,4 @@
 import { evaluate7Cards } from '../core/evaluator';
-import { CardFactory } from '../core/card-factory';
 
 export interface EnumerationResult {
   rawEquity: number;

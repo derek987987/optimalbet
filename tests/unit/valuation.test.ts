@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getEquityRealization, getAdjustedEquity, calculatePotOdds, calculateEV } from '../../src/engine/valuation/formulas';
+import { getAdjustedEquity, calculatePotOdds, calculateEV } from '../../src/engine/valuation/formulas';
 
 describe('Valuation Formulas', () => {
   it('calculates Pot Odds correctly', () => {
@@ -13,10 +13,9 @@ describe('Valuation Formulas', () => {
   });
 
   it('applies Equity Realization (EQR) based on position', () => {
-    expect(getEquityRealization('IP')).toBe(1.15);
-    expect(getEquityRealization('OOP')).toBe(0.85);
-    
     // Raw 50% * 1.15 = 57.5%
-    expect(getAdjustedEquity(0.5, 'IP')).toBe(0.575);
+    expect(getAdjustedEquity(0.5, true)).toBe(0.575);
+    // Raw 50% * 0.85 = 42.5%
+    expect(getAdjustedEquity(0.5, false)).toBe(0.425);
   });
 });

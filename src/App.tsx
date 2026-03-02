@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard';
 import { CardSlotGroup } from './components/inputs/CardSlotGroup';
 import { BettingInputs } from './components/BettingInputs';
@@ -13,7 +12,7 @@ function App() {
   const { 
     holeCards, boardCards, toggleCard, clearHand,
     potSize, setPotSize, facingBet, setFacingBet, 
-    stackSize, setStackSize, isIP, setIsIP, unit, setUnit,
+    stackSize, isIP, setIsIP, unit, setUnit,
     opponents, setOpponents
   } = gameState;
 

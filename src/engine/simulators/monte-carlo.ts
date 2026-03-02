@@ -1,6 +1,4 @@
-import { createCard } from '../core/card-factory';
 import { evaluate7Cards } from '../core/evaluator';
-import { Rank, Suit } from '../core/cards';
 
 export interface MonteCarloResult {
   rawEquity: number;
