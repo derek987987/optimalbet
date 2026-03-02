@@ -18,17 +18,17 @@ export function getAdjustedEquity(equity: number, isIP: boolean): number {
 
 export function getRecommendation(gameState: { potSize: number, facingBetSize: number, stackSize: number, isIP: boolean }, equity: number) {
   const call = Math.min(gameState.facingBetSize, gameState.stackSize);
-  const ev = calculateEV(equity, gameState.potSize, gameState.facingBetSize, call);
-  const potOdds = calculatePotOdds(gameState.potSize, gameState.facingBetSize, call);
   const adjustedEquity = getAdjustedEquity(equity, gameState.isIP);
+  const ev = calculateEV(adjustedEquity, gameState.potSize, gameState.facingBetSize, call);
+  const potOdds = calculatePotOdds(gameState.potSize, gameState.facingBetSize, call);
   
   let recommendation: 'FOLD' | 'CHECK' | 'CALL' | 'RAISE' = 'FOLD';
   
   if (gameState.facingBetSize === 0) {
-    recommendation = equity > 0.5 ? 'RAISE' : 'CHECK';
+    recommendation = adjustedEquity > 0.5 ? 'RAISE' : 'CHECK';
   } else {
     if (ev > 0) {
-      recommendation = (equity - potOdds > 0.15) ? 'RAISE' : 'CALL';
+      recommendation = (adjustedEquity - potOdds > 0.15) ? 'RAISE' : 'CALL';
     } else {
       recommendation = 'FOLD';
     }

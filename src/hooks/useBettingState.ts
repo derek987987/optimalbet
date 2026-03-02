@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { loadState } from '../services/persistence';
 import type { RangePreset } from '../engine/core/ranges';
 
@@ -18,12 +18,12 @@ export const useBettingState = () => {
     { id: '1', rangePreset: 'Random', rangePercentage: 1.0 }
   ]);
 
-  return {
+  return useMemo(() => ({
     potSize, setPotSize,
     facingBet, setFacingBet,
     stackSize, setStackSize,
     isIP, setIsIP,
     unit, setUnit,
     opponents, setOpponents
-  };
+  }), [potSize, facingBet, stackSize, isIP, unit, opponents]);
 };

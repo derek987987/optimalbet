@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useHandState } from './useHandState';
 import { useBettingState } from './useBettingState';
 import { useAutoPersistence } from './useAutoPersistence';
@@ -16,8 +17,8 @@ export const useGameState = () => {
   useAutoPersistence('unit', betting.unit);
   useAutoPersistence('opponents', betting.opponents);
 
-  return {
+  return useMemo(() => ({
     ...hand,
     ...betting
-  };
+  }), [hand, betting]);
 };

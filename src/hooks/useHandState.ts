@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { loadState } from '../services/persistence';
 
 export const useHandState = () => {
@@ -27,10 +27,10 @@ export const useHandState = () => {
     setBoardCards([]);
   }, []);
 
-  return {
+  return useMemo(() => ({
     holeCards,
     boardCards,
     toggleCard,
     clearHand
-  };
+  }), [holeCards, boardCards, toggleCard, clearHand]);
 };

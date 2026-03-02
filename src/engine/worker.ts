@@ -2,6 +2,7 @@ import * as Comlink from 'comlink';
 import { simulateMonteCarlo } from './simulators/monte-carlo';
 import { simulateEnumeration } from './simulators/enumeration';
 import { getRecommendation } from './valuation/formulas';
+import { getRangeBitmask } from './core/ranges';
 import type { GameState } from './core';
 
 export interface CalculationRequest {
@@ -30,6 +31,11 @@ const engine = {
     const { holeCards, boardCards, gameState, options } = request;
     const startTime = performance.now();
     
+    // Generate range bitmasks for all opponents
+    const opponentRanges = (gameState.opponents || []).map(o => 
+      getRangeBitmask(o.rangePreset, o.rangePercentage)
+    );
+
     let simResult;
     
     // Switch to exact enumeration for heads-up post-flop
@@ -37,13 +43,14 @@ const engine = {
     const isHeadsUp = gameState.opponentCount === 1;
 
     if (isHeadsUp && isPostFlop && options.mode !== 'monte-carlo') {
-      simResult = simulateEnumeration(holeCards, boardCards);
+      simResult = simulateEnumeration(holeCards, boardCards, opponentRanges);
     } else {
       simResult = simulateMonteCarlo(
         holeCards,
         boardCards,
         gameState.opponentCount,
-        options.iterations
+        options.iterations,
+        opponentRanges
       );
     }
 

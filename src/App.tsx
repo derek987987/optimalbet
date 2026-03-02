@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard';
 import { CardSlotGroup } from './components/inputs/CardSlotGroup';
 import { BettingInputs } from './components/BettingInputs';
@@ -16,18 +17,20 @@ function App() {
     opponents, setOpponents
   } = gameState;
 
+  const memoizedGameState = useMemo(() => ({
+    potSize,
+    facingBetSize: facingBet,
+    stackSize,
+    isIP,
+    unit,
+    opponentCount: opponents.length,
+    opponents
+  }), [potSize, facingBet, stackSize, isIP, unit, opponents]);
+
   const { result, isCalculating } = useEquityEngine({
     holeCards,
     boardCards,
-    gameState: {
-        potSize,
-        facingBetSize: facingBet,
-        stackSize,
-        isIP,
-        unit,
-        opponentCount: opponents.length,
-        opponents
-    }
+    gameState: memoizedGameState
   });
 
   return (

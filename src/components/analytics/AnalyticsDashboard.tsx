@@ -40,7 +40,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   };
 
   return (
-    <div className={`m-4 p-6 rounded-xl border-2 transition-all ${getRecBg()} shadow-sm`}>
+    <div className={`m-4 p-6 rounded-xl border-2 transition-all ${getRecBg()} shadow-sm ${isCalculating ? 'opacity-50 animate-pulse' : 'opacity-100'}`}>
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Recommendation</span>
@@ -50,7 +50,7 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         </div>
         
         <span className={`text-5xl font-black tracking-tighter ${getRecColor()}`}>
-          {isCalculating ? '...' : recommendation}
+          {recommendation}
         </span>
         
         <div className="mt-6 w-full grid grid-cols-3 gap-2 divide-x divide-gray-200 dark:divide-gray-700">
