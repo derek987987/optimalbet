@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { getCardName, getSuitSymbol, getSuitColorClass } from '../../engine/utils/card-naming';
-import { CardModal } from '../common/CardModal';
+import { CardGrid } from './CardGrid';
+import { useCardSelection } from '../../hooks/useCardSelection';
+import { cardToString, stringToCard } from '../../engine/core/cards';
 
 interface CardSlotGroupProps {
   holeCards: number[];
   boardCards: number[];
-  onSelectCard: (card: number) => void;
+  onSelectCard: (type: 'hole' | 'board', index: number, card: number | null) => void;
   onClear: () => void;
 }
 
@@ -44,23 +46,25 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
   onSelectCard,
   onClear
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isOpen, activeSlotIndex, openGrid, closeGrid } = useCardSelection();
 
-  const handleSlotClick = (_type: 'hole' | 'board', _index: number, currentCard?: number) => {
-    if (currentCard !== undefined) {
-      // If card exists, remove it on tap (per US4)
-      onSelectCard(currentCard); 
+  const handleSlotClick = (index: number) => {
+    openGrid(index);
+  };
+
+  const handleGridSelect = (cardStr: string) => {
+    if (activeSlotIndex === null) return;
+    const cardId = stringToCard(cardStr);
+    
+    if (activeSlotIndex < 2) {
+      onSelectCard('hole', activeSlotIndex, cardId);
     } else {
-      setIsModalOpen(true);
+      onSelectCard('board', activeSlotIndex - 2, cardId);
     }
+    closeGrid();
   };
 
-  const handleCardSelect = (card: number) => {
-    onSelectCard(card);
-    // Modal stays open for auto-advance filling (per US4)
-  };
-
-  const allSelected = [...holeCards, ...boardCards];
+  const selectedCardsStr = [...holeCards, ...boardCards].map(cardToString);
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -72,13 +76,13 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
         <CardSlot 
           card={holeCards[0]} 
           label="H1" 
-          onClick={() => handleSlotClick('hole', 0, holeCards[0])}
+          onClick={() => handleSlotClick(0)}
           className="hole-card-slot" 
         />
         <CardSlot 
           card={holeCards[1]} 
           label="H2" 
-          onClick={() => handleSlotClick('hole', 1, holeCards[1])}
+          onClick={() => handleSlotClick(1)}
           className="hole-card-slot"
         />
       </div>
@@ -90,17 +94,17 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
             key={i}
             card={boardCards[i]} 
             label={`B${i+1}`} 
-            onClick={() => handleSlotClick('board', i, boardCards[i])}
+            onClick={() => handleSlotClick(i + 2)}
             className="board-card-slot"
           />
         ))}
       </div>
 
-      <CardModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        selectedCards={allSelected}
-        onSelectCard={handleCardSelect}
+      <CardGrid
+        isOpen={isOpen}
+        onClose={closeGrid}
+        selectedCards={selectedCardsStr}
+        onSelect={handleGridSelect}
       />
     </div>
   );

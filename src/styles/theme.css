@@ -1,5 +1,4 @@
 /* src/styles/theme.css */
-@import "tailwindcss";
 
 @layer base {
   :root {
@@ -19,7 +18,7 @@
   }
 
   body {
-    @apply bg-[var(--bg-primary)] text-[var(--bg-primary)] transition-colors duration-300;
+    @apply bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300;
     /* Force dark mode by default if needed, or rely on tailwind 'dark' class */
   }
 }

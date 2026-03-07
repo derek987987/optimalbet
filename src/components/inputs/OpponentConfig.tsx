@@ -1,19 +1,23 @@
 import React from 'react';
 import { RANGE_PRESETS } from '../../engine/core/ranges';
 import type { RangePreset } from '../../engine/core/ranges';
+import { TermHighlight } from '../education/TermHighlight';
+import type { GlossaryTerm } from '../../types/glossary';
 
 interface OpponentConfigProps {
   count: number;
   rangePreset: RangePreset;
   onCountChange: (count: number) => void;
   onRangeChange: (range: RangePreset) => void;
+  onInfoClick: (term: GlossaryTerm) => void;
 }
 
 export const OpponentConfig: React.FC<OpponentConfigProps> = ({
   count,
   rangePreset,
   onCountChange,
-  onRangeChange
+  onRangeChange,
+  onInfoClick
 }) => {
   return (
     <div className="p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
@@ -37,7 +41,7 @@ export const OpponentConfig: React.FC<OpponentConfigProps> = ({
       </div>
 
       <div className="flex justify-between items-center">
-        <label className="text-xs font-bold text-gray-500 uppercase">Range</label>
+        <TermHighlight term="Ranges" onInfoClick={onInfoClick} className="text-xs font-bold text-gray-500 uppercase">Range</TermHighlight>
         <div className="flex bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
           {(Object.keys(RANGE_PRESETS) as RangePreset[]).map((preset) => (
             <button

@@ -10,6 +10,8 @@ Auto-generated from all feature plans. Last updated: 2026-02-26
 - Browser LocalStorage (Game state persistence) (003-advanced-poker-analytics)
 - TypeScript 5.x / React 18+ + Vite, Comlink (Web Worker RPC), Tailwind CSS v4, Lucide Reac (004-fix-logic-stability)
 - TypeScript 5.x, Rust 1.7x + React 19, Vite, Comlink, Tailwind CSS v4, wasm-pack (005-engine-performance-and-ui)
+- TypeScript 5.x, React 18+ + Vite, Tailwind CSS v4, Lucide React (Icons), Comlink (Web Worker RPC) (006-betting-ux-optimization)
+- Browser LocalStorage (Persistence of settings/state) (006-betting-ux-optimization)
 
 - TypeScript 5.x / React 18+ + React, Tailwind CSS, Vite (Build tool/PWA plugin) (002-poker-ev-calc)
 
@@ -29,9 +31,9 @@ npm test && npm run lint
 TypeScript 5.x / React 18+: Follow standard conventions
 
 ## Recent Changes
+- 006-betting-ux-optimization: Added TypeScript 5.x, React 18+ + Vite, Tailwind CSS v4, Lucide React (Icons), Comlink (Web Worker RPC)
 - 005-engine-performance-and-ui: Added TypeScript 5.x, Rust 1.7x + React 19, Vite, Comlink, Tailwind CSS v4, wasm-pack
 - 004-fix-logic-stability: Added TypeScript 5.x / React 18+ + Vite, Comlink (Web Worker RPC), Tailwind CSS v4, Lucide Reac
-- 003-advanced-poker-analytics: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 
 
 <!-- MANUAL ADDITIONS START -->

@@ -2,20 +2,25 @@ import { useMemo } from 'react';
 import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard';
 import { CardSlotGroup } from './components/inputs/CardSlotGroup';
 import { BettingInputs } from './components/BettingInputs';
-import { QuickBetButtons } from './components/inputs/QuickBetButtons';
 import { BetSlider } from './components/inputs/BetSlider';
 import { OpponentConfig } from './components/inputs/OpponentConfig';
 import { useGameState } from './hooks/useGameState';
 import { useEquityEngine } from './hooks/useEquityEngine';
+import { useGlossary } from './hooks/useGlossary';
+import { GlossaryPopup } from './components/education/GlossaryPopup';
 
 function App() {
   const gameState = useGameState();
   const { 
-    holeCards, boardCards, toggleCard, clearHand,
+    holeCards, boardCards, clearHand,
+    setCardAt,
     potSize, setPotSize, facingBet, setFacingBet, 
     stackSize, isIP, setIsIP, unit, setUnit,
-    opponents, setOpponents
+    opponents, setOpponents,
+    selectedRatio, setRatio
   } = gameState;
+
+  const { activeTerm, openGlossary, closeGlossary } = useGlossary();
 
   const memoizedGameState = useMemo(() => ({
     potSize,
@@ -54,6 +59,7 @@ function App() {
             {...result}
             position={isIP ? 'IP' : 'OOP'}
             isCalculating={isCalculating}
+            onInfoClick={openGlossary}
           />
         ) : (
           <div className="p-8 text-center text-gray-400 text-sm">Select cards to start analysis</div>
@@ -73,7 +79,7 @@ function App() {
           <CardSlotGroup
             holeCards={holeCards}
             boardCards={boardCards}
-            onSelectCard={toggleCard}
+            onSelectCard={setCardAt}
             onClear={clearHand}
           />
 
@@ -82,12 +88,8 @@ function App() {
             facingBet={facingBet}
             onUpdatePot={setPotSize}
             onUpdateBet={setFacingBet}
-          />
-
-          <QuickBetButtons
-            potSize={potSize}
-            heroStack={stackSize}
-            onBetSelect={setFacingBet}
+            selectedRatio={selectedRatio}
+            onSelectRatio={setRatio}
           />
 
           <BetSlider
@@ -110,9 +112,12 @@ function App() {
                 const newOpps = opponents.map(o => ({ ...o, rangePreset: r }));
                 setOpponents(newOpps);
             }}
+            onInfoClick={openGlossary}
           />
         </div>
       </main>
+
+      <GlossaryPopup term={activeTerm} onClose={closeGlossary} />
     </div>
   );
 }

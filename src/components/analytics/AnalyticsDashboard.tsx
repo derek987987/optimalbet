@@ -1,4 +1,7 @@
 import React from 'react';
+import { DecisionRationale } from './DecisionRationale';
+import { TermHighlight } from '../education/TermHighlight';
+import type { GlossaryTerm } from '../../types/glossary';
 
 interface AnalyticsDashboardProps {
   rawEquity: number;
@@ -8,6 +11,7 @@ interface AnalyticsDashboardProps {
   recommendation: 'FOLD' | 'CHECK' | 'CALL' | 'RAISE';
   position: 'IP' | 'OOP';
   isCalculating: boolean;
+  onInfoClick: (term: GlossaryTerm) => void;
 }
 
 export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
@@ -17,7 +21,8 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   ev,
   recommendation,
   position,
-  isCalculating
+  isCalculating,
+  onInfoClick
 }) => {
   const getRecColor = () => {
     switch (recommendation) {
@@ -44,9 +49,11 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
       <div className="flex flex-col items-center">
         <div className="flex items-center gap-2 mb-2">
           <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Recommendation</span>
-          <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${position === 'IP' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
-            {position}
-          </span>
+          <TermHighlight term="Position" onInfoClick={onInfoClick}>
+            <span className={`text-[9px] px-1.5 py-0.5 rounded font-bold ${position === 'IP' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'}`}>
+                {position}
+            </span>
+          </TermHighlight>
         </div>
         
         <span className={`text-5xl font-black tracking-tighter ${getRecColor()}`}>
@@ -55,7 +62,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         
         <div className="mt-6 w-full grid grid-cols-3 gap-2 divide-x divide-gray-200 dark:divide-gray-700">
           <div className="flex flex-col items-center px-2">
-            <span className="text-[9px] font-bold text-gray-400 uppercase mb-1">Raw Eq</span>
+            <TermHighlight term="Equity" onInfoClick={onInfoClick} className="text-[9px] font-bold text-gray-400 uppercase mb-1">
+                Raw Eq
+            </TermHighlight>
             <span className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {(rawEquity * 100).toFixed(1)}%
             </span>
@@ -65,7 +74,9 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           </div>
           
           <div className="flex flex-col items-center px-2">
-            <span className="text-[9px] font-bold text-gray-400 uppercase mb-1">Pot Odds</span>
+            <TermHighlight term="PotOdds" onInfoClick={onInfoClick} className="text-[9px] font-bold text-gray-400 uppercase mb-1">
+                Pot Odds
+            </TermHighlight>
             <span className="text-xl font-bold text-gray-800 dark:text-gray-100">
               {(potOdds * 100).toFixed(1)}%
             </span>
@@ -75,13 +86,21 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
           </div>
 
           <div className="flex flex-col items-center px-2">
-            <span className="text-[9px] font-bold text-gray-400 uppercase mb-1">EV</span>
+            <TermHighlight term="EV" onInfoClick={onInfoClick} className="text-[9px] font-bold text-gray-400 uppercase mb-1">
+                EV
+            </TermHighlight>
             <span className={`text-xl font-bold ${ev >= 0 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
               {ev >= 0 ? '+' : ''}{ev.toFixed(2)}
             </span>
           </div>
         </div>
       </div>
+      
+      <DecisionRationale
+        recommendation={recommendation}
+        equity={adjustedEquity}
+        potOdds={potOdds}
+      />
     </div>
   );
 };
