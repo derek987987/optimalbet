@@ -1,0 +1,1 @@
+node_modules/\ndist/\nbuild/\ncoverage/\npackage-lock.json\n*.log\n.env*
