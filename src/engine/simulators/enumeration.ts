@@ -55,6 +55,13 @@ export const simulateEnumeration = (
             }
         }
     }
+  } else {
+    // Fallback if called with unsupported board length (e.g. Flop)
+    return {
+        rawEquity: 0,
+        combinationsProcessed: 0,
+        isMonteCarlo: false
+    };
   }
 
   // Handle case where range might result in zero valid combinations (should not happen with Random)

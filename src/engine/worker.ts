@@ -38,11 +38,11 @@ const engine = {
 
     let simResult;
     
-    // Switch to exact enumeration for heads-up post-flop
-    const isPostFlop = boardCards.length >= 3;
+    // Switch to exact enumeration for heads-up post-flop (Turn and River only)
+    const isLateStreet = boardCards.length >= 4;
     const isHeadsUp = gameState.opponentCount === 1;
 
-    if (isHeadsUp && isPostFlop && options.mode !== 'monte-carlo') {
+    if (isHeadsUp && isLateStreet && options.mode !== 'monte-carlo') {
       simResult = simulateEnumeration(holeCards, boardCards, opponentRanges);
     } else {
       simResult = simulateMonteCarlo(
