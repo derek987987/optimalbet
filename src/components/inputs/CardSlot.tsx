@@ -53,7 +53,7 @@ export const CardSlot: React.FC<CardSlotProps> = ({
         <CardSuggestion 
           suggestions={suggestions} 
           selectedIndex={selectedIndex} 
-          onSelect={(card) => {
+          onSelect={() => {
             if (onConfirmSuggestion) onConfirmSuggestion();
           }}
         />
