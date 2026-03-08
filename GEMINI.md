@@ -14,6 +14,8 @@ Auto-generated from all feature plans. Last updated: 2026-02-26
 - Browser LocalStorage (Persistence of settings/state) (006-betting-ux-optimization)
 - TypeScript 5.x, React 18+ (Vite) + Tailwind CSS v4, Lucide React, Comlink (for worker communication if state updates trigger heavy re-calc) (007-input-speed-optimization)
 - Browser LocalStorage (via existing `useAutoPersistence`) (007-input-speed-optimization)
+- TypeScript 5.x, React 18+ + Lucide React (for UI icons) (008-suggest-raise-sizes)
+- N/A (Transient UI state derived from existing game state) (008-suggest-raise-sizes)
 
 - TypeScript 5.x / React 18+ + React, Tailwind CSS, Vite (Build tool/PWA plugin) (002-poker-ev-calc)
 
@@ -33,9 +35,9 @@ npm test && npm run lint
 TypeScript 5.x / React 18+: Follow standard conventions
 
 ## Recent Changes
+- 008-suggest-raise-sizes: Added TypeScript 5.x, React 18+ + Lucide React (for UI icons)
 - 007-input-speed-optimization: Added TypeScript 5.x, React 18+ (Vite) + Tailwind CSS v4, Lucide React, Comlink (for worker communication if state updates trigger heavy re-calc)
 - 006-betting-ux-optimization: Added TypeScript 5.x, React 18+ + Vite, Tailwind CSS v4, Lucide React (Icons), Comlink (Web Worker RPC)
-- 005-engine-performance-and-ui: Added TypeScript 5.x, Rust 1.7x + React 19, Vite, Comlink, Tailwind CSS v4, wasm-pack
 
 
 <!-- MANUAL ADDITIONS START -->

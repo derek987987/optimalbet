@@ -1,6 +1,7 @@
 import React from 'react';
 import { DecisionRationale } from './DecisionRationale';
 import { TermHighlight } from '../education/TermHighlight';
+import { RaiseSuggestions } from './RaiseSuggestions';
 import type { GlossaryTerm } from '../../types/glossary';
 
 interface AnalyticsDashboardProps {
@@ -12,6 +13,12 @@ interface AnalyticsDashboardProps {
   position: 'IP' | 'OOP';
   isCalculating: boolean;
   onInfoClick: (term: GlossaryTerm) => void;
+  // Sizing Context
+  potSize: number;
+  facingBetSize: number;
+  stackSize: number;
+  unit: string;
+  onApplySizing: (amount: number) => void;
 }
 
 export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
@@ -22,7 +29,12 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
   recommendation,
   position,
   isCalculating,
-  onInfoClick
+  onInfoClick,
+  potSize,
+  facingBetSize,
+  stackSize,
+  unit,
+  onApplySizing
 }) => {
   const getRecColor = () => {
     switch (recommendation) {
@@ -100,6 +112,15 @@ export const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({
         recommendation={recommendation}
         equity={adjustedEquity}
         potOdds={potOdds}
+      />
+
+      <RaiseSuggestions
+        potSize={potSize}
+        facingBetSize={facingBetSize}
+        stackSize={stackSize}
+        recommendation={recommendation}
+        unit={unit}
+        onApplySizing={onApplySizing}
       />
     </div>
   );

@@ -60,6 +60,11 @@ function App() {
             position={isIP ? 'IP' : 'OOP'}
             isCalculating={isCalculating}
             onInfoClick={openGlossary}
+            potSize={potSize}
+            facingBetSize={facingBet}
+            stackSize={stackSize}
+            unit={unit}
+            onApplySizing={setFacingBet}
           />
         ) : (
           <div className="p-8 text-center text-gray-400 text-sm">Select cards to start analysis</div>
