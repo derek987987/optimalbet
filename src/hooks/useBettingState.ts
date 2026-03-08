@@ -43,6 +43,21 @@ export const useBettingState = () => {
     setFacingBetInternal(potSize * ratio);
   }, [potSize]);
 
+  const MAX_BET = 999999;
+
+  const incrementPot = useCallback((amount: number) => {
+    setPotSizeInternal(prev => Math.min(MAX_BET, Math.max(0, prev + amount)));
+  }, []);
+
+  const incrementFacing = useCallback((amount: number) => {
+    setFacingBetInternal(prev => Math.min(MAX_BET, Math.max(0, prev + amount)));
+    setInputMode('manual');
+    setSelectedRatio(null);
+  }, []);
+
+  const resetPot = useCallback(() => setPotSizeInternal(0), []);
+  const resetFacing = useCallback(() => setFacingBetInternal(0), []);
+
   return useMemo(() => ({
     potSize, setPotSize,
     facingBet, setFacingBet,
@@ -52,6 +67,10 @@ export const useBettingState = () => {
     opponents, setOpponents,
     inputMode,
     selectedRatio,
-    setRatio
-  }), [potSize, setPotSize, facingBet, setFacingBet, stackSize, isIP, unit, opponents, inputMode, selectedRatio, setRatio]);
+    setRatio,
+    incrementPot,
+    incrementFacing,
+    resetPot,
+    resetFacing
+  }), [potSize, setPotSize, facingBet, setFacingBet, stackSize, isIP, unit, opponents, inputMode, selectedRatio, setRatio, incrementPot, incrementFacing, resetPot, resetFacing]);
 };

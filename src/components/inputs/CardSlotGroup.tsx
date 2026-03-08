@@ -1,7 +1,8 @@
-import React from 'react';
-import { getCardName, getSuitSymbol, getSuitColorClass } from '../../engine/utils/card-naming';
+import React, { useCallback, useMemo } from 'react';
 import { CardGrid } from './CardGrid';
+import { CardSlot } from './CardSlot';
 import { useCardSelection } from '../../hooks/useCardSelection';
+import { useCardBuffer } from '../../hooks/useCardBuffer';
 import { cardToString, stringToCard } from '../../engine/core/cards';
 
 interface CardSlotGroupProps {
@@ -11,45 +12,93 @@ interface CardSlotGroupProps {
   onClear: () => void;
 }
 
-const CardSlot: React.FC<{ card?: number; label: string; onClick: () => void; isActive?: boolean; className?: string }> = ({ 
-  card, label, onClick, isActive, className = ''
-}) => {
-  const suit = card !== undefined ? card % 4 : 0;
-  const symbol = card !== undefined ? getSuitSymbol(suit) : null;
-  const colorClass = card !== undefined ? getSuitColorClass(suit) : '';
-  const name = card !== undefined ? getCardName(card).slice(0, -1) : '';
-
-  return (
-    <div 
-      onClick={onClick}
-      className={`
-        w-14 h-20 rounded-lg border-2 flex flex-col items-center justify-center cursor-pointer transition-all active:scale-95 ${className}
-        ${card !== undefined ? 'bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-600' : 'bg-gray-100 border-dashed border-gray-300 dark:bg-gray-900 dark:border-gray-700'}
-        ${isActive ? 'ring-2 ring-blue-500 border-blue-500' : ''}
-      `}
-    >
-      {card !== undefined ? (
-        <>
-          <span className="text-lg font-bold text-gray-900 dark:text-gray-100">{name}</span>
-          <span className={`text-2xl leading-none ${colorClass}`}>{symbol}</span>
-        </>
-      ) : (
-        <span className="text-[10px] text-gray-400 font-bold uppercase">{label}</span>
-      )}
-    </div>
-  );
-};
-
 export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
   holeCards,
   boardCards,
   onSelectCard,
   onClear
 }) => {
-  const { isOpen, activeSlotIndex, openGrid, closeGrid } = useCardSelection();
+  const { 
+    isOpen, 
+    activeSlotIndex, 
+    openGrid, 
+    closeGrid, 
+    activeSlotId, 
+    setActiveSlotId 
+  } = useCardSelection();
 
-  const handleSlotClick = (index: number) => {
-    openGrid(index);
+  const selectedCardsStr = useMemo(() => 
+    [...holeCards, ...boardCards].filter(c => c !== undefined).map(cardToString),
+    [holeCards, boardCards]
+  );
+
+  const handleCardConfirm = useCallback((cardStr: string) => {
+    if (activeSlotId === null) return;
+    
+    const cardId = stringToCard(cardStr);
+    const [type, indexStr] = activeSlotId.split('-');
+    const index = parseInt(indexStr);
+
+    if (type === 'hole') {
+      onSelectCard('hole', index, cardId);
+    } else {
+      onSelectCard('board', index, cardId);
+    }
+    
+    // Auto-advance focus if possible
+    if (type === 'hole' && index === 0) {
+      setActiveSlotId('hole-1');
+    } else if (type === 'hole' && index === 1) {
+      setActiveSlotId('board-0');
+    } else if (type === 'board' && index < 4) {
+      setActiveSlotId(`board-${index + 1}`);
+    } else {
+      setActiveSlotId(null);
+    }
+  }, [activeSlotId, onSelectCard, setActiveSlotId]);
+
+  const { 
+    buffer, 
+    suggestions, 
+    selectedIndex, 
+    setSelectedIndex, 
+    updateBuffer, 
+    clearBuffer, 
+    onConfirmSuggestion 
+  } = useCardBuffer(handleCardConfirm, selectedCardsStr);
+
+  const handleSlotClick = (type: 'hole' | 'board', index: number) => {
+    const slotId = `${type}-${index}`;
+    setActiveSlotId(slotId);
+    clearBuffer();
+    // Open selection grid immediately on first click
+    openGrid(type === 'hole' ? index : index + 2);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setActiveSlotId(null);
+      clearBuffer();
+    } else if (e.key === 'Backspace') {
+      if (activeSlotId) {
+        const [type, indexStr] = activeSlotId.split('-');
+        onSelectCard(type as 'hole' | 'board', parseInt(indexStr), null);
+        clearBuffer();
+      }
+    } else if (e.key === 'ArrowRight') {
+      setSelectedIndex(prev => (prev + 1) % suggestions.length);
+      e.preventDefault();
+    } else if (e.key === 'ArrowLeft') {
+      setSelectedIndex(prev => (prev - 1 + suggestions.length) % suggestions.length);
+      e.preventDefault();
+    } else if (e.key === 'Enter') {
+      if (suggestions.length > 0) {
+        onConfirmSuggestion();
+        e.preventDefault();
+      }
+    } else if (e.key.length === 1) {
+      updateBuffer(e.key);
+    }
   };
 
   const handleGridSelect = (cardStr: string) => {
@@ -62,9 +111,8 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
       onSelectCard('board', activeSlotIndex - 2, cardId);
     }
     closeGrid();
+    setActiveSlotId(null);
   };
-
-  const selectedCardsStr = [...holeCards, ...boardCards].map(cardToString);
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -74,15 +122,29 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
       </div>
       <div className="flex gap-2">
         <CardSlot 
+          id="hole-0"
           card={holeCards[0]} 
           label="H1" 
-          onClick={() => handleSlotClick(0)}
+          onClick={() => handleSlotClick('hole', 0)}
+          onKeyDown={handleKeyDown}
+          isFocused={activeSlotId === 'hole-0'}
+          buffer={activeSlotId === 'hole-0' ? buffer : undefined}
+          suggestions={activeSlotId === 'hole-0' ? suggestions : []}
+          selectedIndex={selectedIndex}
+          onConfirmSuggestion={onConfirmSuggestion}
           className="hole-card-slot" 
         />
         <CardSlot 
+          id="hole-1"
           card={holeCards[1]} 
           label="H2" 
-          onClick={() => handleSlotClick(1)}
+          onClick={() => handleSlotClick('hole', 1)}
+          onKeyDown={handleKeyDown}
+          isFocused={activeSlotId === 'hole-1'}
+          buffer={activeSlotId === 'hole-1' ? buffer : undefined}
+          suggestions={activeSlotId === 'hole-1' ? suggestions : []}
+          selectedIndex={selectedIndex}
+          onConfirmSuggestion={onConfirmSuggestion}
           className="hole-card-slot"
         />
       </div>
@@ -92,9 +154,16 @@ export const CardSlotGroup: React.FC<CardSlotGroupProps> = ({
         {[0, 1, 2, 3, 4].map(i => (
           <CardSlot 
             key={i}
+            id={`board-${i}`}
             card={boardCards[i]} 
             label={`B${i+1}`} 
-            onClick={() => handleSlotClick(i + 2)}
+            onClick={() => handleSlotClick('board', i)}
+            onKeyDown={handleKeyDown}
+            isFocused={activeSlotId === `board-${i}`}
+            buffer={activeSlotId === `board-${i}` ? buffer : undefined}
+            suggestions={activeSlotId === `board-${i}` ? suggestions : []}
+            selectedIndex={selectedIndex}
+            onConfirmSuggestion={onConfirmSuggestion}
             className="board-card-slot"
           />
         ))}

@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { AnalyticsDashboard } from './components/analytics/AnalyticsDashboard';
 import { CardSlotGroup } from './components/inputs/CardSlotGroup';
 import { BettingInputs } from './components/BettingInputs';
-import { BetSlider } from './components/inputs/BetSlider';
 import { OpponentConfig } from './components/inputs/OpponentConfig';
 import { useGameState } from './hooks/useGameState';
 import { useEquityEngine } from './hooks/useEquityEngine';
@@ -17,7 +16,8 @@ function App() {
     potSize, setPotSize, facingBet, setFacingBet, 
     stackSize, isIP, setIsIP, unit, setUnit,
     opponents, setOpponents,
-    selectedRatio, setRatio
+    selectedRatio, setRatio,
+    incrementPot, incrementFacing, resetPot, resetFacing
   } = gameState;
 
   const { activeTerm, openGlossary, closeGlossary } = useGlossary();
@@ -88,15 +88,12 @@ function App() {
             facingBet={facingBet}
             onUpdatePot={setPotSize}
             onUpdateBet={setFacingBet}
+            onIncrementPot={incrementPot}
+            onIncrementBet={incrementFacing}
+            onResetPot={resetPot}
+            onResetBet={resetFacing}
             selectedRatio={selectedRatio}
             onSelectRatio={setRatio}
-          />
-
-          <BetSlider
-            value={facingBet}
-            min={0}
-            max={stackSize}
-            onChange={setFacingBet}
           />
           
           <OpponentConfig
